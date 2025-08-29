@@ -1,60 +1,65 @@
 <template>
   <div class="otp-container">
+    {{ digits }}
     <input
-      v-for="(digit, index) in digits"
-      :key="index"
-      type="text"
-      maxlength="1"
+      v-for="(digit, i) in digits"
+      :key="i"
       class="otp-input"
-      v-model="digits[index]"
-      @input="onInput($event, index)"
-      @keydown.backspace="onBackspace(index, $event)"
-      ref="otpRefs[index]"
+      v-model="digits[i]"
+      maxlength="1"
+      @input="onInput($event, i)"
+      @keydown.backspace.prevent="onBackspace(i)"
+      :placeholder="placeholder || i + 1"
     />
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, nextTick } from "vue";
+import { ref, watch, onMounted, defineProps } from "vue";
 
-// تعداد رقم‌های OTP
-const length = 6;
+const props = defineProps({
+  modelValue: { type: String, default: "" },
+  length: { type: Number, default: 6 },
+  placeholder: { type: String, default: "" }
+});
 
-// digits state
-const digits = reactive(Array(length).fill(""));
-// refs برای کنترل فوکوس
-const otpRefs = Array.from({ length }, () => ref(null));
+const emit = defineEmits(["update:modelValue"]);
 
-// هندل تغییر هر input
+const digits = ref(Array(props.length).fill(""));
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (val !== digits.value.join("")) {
+      const chars = val.split("").slice(0, props.length);
+      digits.value = Array.from({ length: props.length }, (_, i) => chars[i] || "");
+    }
+  },
+  { immediate: true }
+);
+watch(digits, (newDigits) => {
+  emit("update:modelValue", newDigits.join(""));
+});
+
 function onInput(e, index) {
   const val = e.target.value;
-  if (val && index < length - 1) {
-    otpRefs[index + 1].value.focus();
+  if (val && index < props.length - 1) {
+    const nextInput = document.querySelectorAll(".otp-input")[index + 1];
+    nextInput?.focus();
   }
 }
 
-// هندل بک‌اسپیس
-function onBackspace(index, e) {
-  if (!digits[index] && index > 0) {
-    otpRefs[index - 1].value.focus();
+function onBackspace(index) {
+  if (!digits.value[index] && index > 0) {
+    const prevInput = document.querySelectorAll(".otp-input")[index - 1];
+    prevInput?.focus();
   }
 }
 
-// گرفتن مقدار نهایی
-function getCode() {
-  return digits.join("");
-}
-
-// --- Web OTP API ---
 async function autoFillOtp(timeout = 60000) {
-  if (!("OTPCredential" in window)) {
-    console.log("Web OTP API not supported");
-    return;
-  }
+  if (!("OTPCredential" in window)) return;
 
   const controller = new AbortController();
   const signal = controller.signal;
-
   setTimeout(() => controller.abort(), timeout);
 
   try {
@@ -62,15 +67,10 @@ async function autoFillOtp(timeout = 60000) {
       otp: { transport: ["sms"] },
       signal
     });
-
     if (content?.code) {
-      // پر کردن digits یکی یکی
-      const code = content.code.split("");
-      code.forEach((c, i) => {
-        if (i < length) digits[i] = c;
+      content.code.split("").forEach((c, i) => {
+        if (i < props.length) digits.value[i] = c;
       });
-      await nextTick();
-      console.log("Auto-filled OTP:", getCode());
     }
   } catch (err) {
     console.warn("OTP AutoFill failed:", err.message);

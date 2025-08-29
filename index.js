@@ -1,2 +1,2 @@
-import OtpInput from "./src/OtpInput.vue";
-export default OtpInput;
+const OtpInput = require("./src/OtpInput.vue")
+module.exports = OtpInput
