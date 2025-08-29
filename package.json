@@ -1,0 +1,25 @@
+{
+  "name": "vue-web-otp",
+  "version": "1.0.1",
+  "description": "Vue 3 OTP input with Web OTP API autofill support",
+  "main": "index.js",
+  "files": ["src", "index.js"],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daniyelford/vue-web-otp.git"
+  },
+  "keywords": ["vue", "otp", "sms", "autofill"],
+  "author": "dnylfrd",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/daniyelford/vue-web-otp/issues"
+  },
+  "homepage": "https://github.com/daniyelford/vue-web-otp#readme",
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  }
+}
