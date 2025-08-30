@@ -1,55 +1,73 @@
-import { ref as d, watch as v, onMounted as y, createElementBlock as r, openBlock as s, createTextVNode as x, toDisplayString as b, Fragment as w, renderList as _, withDirectives as k, withKeys as V, normalizeClass as C, vModelText as E, nextTick as u } from "vue";
-const T = { class: "otp-container" }, I = ["onUpdate:modelValue", "placeholder", "onInput", "onKeydown"], O = `
-  .otp-container { direction: ltr;display: flex; gap: 0.5rem; justify-content: space-evenly; }
-  .digit-box { width: 1.5rem; height: 2rem; font-size: 1rem; text-align: center; border: 2px solid black; border-radius: 6px; }
-  .bounce { animation: pulse 0.3s ease-in-out alternate; } 
-    @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
-  `, D = {
+import { ref as m, watch as _, onMounted as k, nextTick as r, createElementBlock as c, openBlock as u, Fragment as b, renderList as T, withDirectives as A, normalizeClass as E, vModelText as V } from "vue";
+const C = { class: "otp-container" }, I = ["onUpdate:modelValue", "onInput", "onKeydown"], j = {
   __name: "OtpInput",
   props: {
     modelValue: { type: String, default: "" },
     length: { type: Number, default: 6 }
   },
   emits: ["update:modelValue"],
-  setup(i, { emit: p }) {
-    const m = d(""), c = i, h = p, n = d(Array.from({ length: c.length }, (a, e) => c.modelValue[e] || "")), g = (a, e) => {
-      const o = a.target.value.replace(/[^0-9]/g, "");
-      o && (n.value[e] = o, e < n.value.length - 1 && u(() => a.target.parentElement.children[e + 1].focus()));
-    }, f = (a, e) => {
-      !n.value[e] && e > 0 && u(() => a.target.parentElement.children[e - 1].focus());
+  setup(g, { emit: h }) {
+    const i = m(""), s = g, f = h, o = m(Array.from({ length: s.length }, (n, e) => s.modelValue[e] || "")), v = (n) => {
+      const e = { "۰": "0", "۱": "1", "۲": "2", "۳": "3", "۴": "4", "۵": "5", "۶": "6", "۷": "7", "۸": "8", "۹": "9" };
+      return n.replace(/[۰-۹]/g, (t) => e[t]);
+    }, y = (n, e) => {
+      const t = v(n.target.value).replace(/[^0-9]/g, "").charAt(0) || "";
+      o.value[e] = t, t && e < o.value.length - 1 && r(() => n.target.parentElement.children[e + 1].focus());
+    }, w = (n, e) => {
+      const t = n.currentTarget.parentElement.children;
+      if (n.key === "Backspace") {
+        !o.value[e] && e > 0 && r(() => t[e - 1].focus());
+        return;
+      }
+      n.key === "ArrowLeft" && e > 0 && r(() => t[e - 1].focus()), n.key === "ArrowRight" && e < o.value.length - 1 && r(() => t[e + 1].focus());
     };
-    return v(n, () => {
-      h("update:modelValue", n.value.join(""));
-    }, { deep: !0 }), y(() => {
-      const a = document.createElement("style");
-      a.textContent = O, document.head.appendChild(a), "OTPCredential" in window ? window.addEventListener("DOMContentLoaded", (e) => {
-        const o = new AbortController();
+    return _(o, () => {
+      f("update:modelValue", o.value.join("")), i.value = o.value.join("");
+    }, { deep: !0 }), k(() => {
+      const n = document.createElement("style");
+      if (n.textContent = `
+    .otp-container { direction: ltr;display: flex; gap: 0.5rem; justify-content: space-evenly; }
+    .digit-box { width: 1.5rem; height: 2rem; font-size: 1rem; text-align: center; border: 2px solid black; border-radius: 6px; }
+    .bounce { animation: pulse 0.3s ease-in-out alternate; } 
+      @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+    `, document.head.appendChild(n), "OTPCredential" in window) {
+        const e = new AbortController();
         navigator.credentials.get({
           otp: { transport: ["sms"] },
-          signal: o.signal
+          signal: e.signal
         }).then((t) => {
-          alert(t.code), n.value = t.code.split("");
+          if (t?.code) {
+            i.value = t.code;
+            const l = t.code.split("").slice(0, s.length);
+            o.value = l, r(() => {
+              const a = document.querySelectorAll(".otp-container input");
+              l.forEach((x, p) => {
+                a[p] && (a[p].value = x);
+              });
+              const d = Math.min(l.length, s.length) - 1;
+              a[d] && a[d].focus();
+            });
+          } else
+            console.warn("OTP code not received!");
         }).catch((t) => {
-          console.log(t);
+          console.warn("OTP error", t.message);
         });
-      }) : alert("WebOTP not supported!.");
-    }), (a, e) => (s(), r("div", T, [
-      x(b(m.value ?? "") + " ", 1),
-      (s(!0), r(w, null, _(n.value, (o, t) => k((s(), r("input", {
-        key: t,
+      }
+    }), (n, e) => (u(), c("div", C, [
+      (u(!0), c(b, null, T(o.value, (t, l) => A((u(), c("input", {
+        key: l,
         type: "text",
-        class: C(["digit-box", { bounce: o !== "" }]),
-        "onUpdate:modelValue": (l) => n.value[t] = l,
+        class: E(["digit-box", { bounce: t !== "" }]),
+        "onUpdate:modelValue": (a) => o.value[l] = a,
         maxlength: "1",
-        placeholder: n.value[t] ?? 0,
-        onInput: (l) => g(l, t),
-        onKeydown: V((l) => f(l, t), ["backspace"])
+        onInput: (a) => y(a, l),
+        onKeydown: (a) => w(a, l)
       }, null, 42, I)), [
-        [E, n.value[t]]
+        [V, o.value[l]]
       ])), 128))
     ]));
   }
 };
 export {
-  D as default
+  j as default
 };
