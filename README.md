@@ -19,6 +19,8 @@
 npm install vue-otp-autofill
 ```
 
+---
+
 ## 🚀 Usage
 
 ### Basic
@@ -38,6 +40,7 @@ npm install vue-otp-autofill
     };
 </script>
 ```
+
 ### With Form (listen to v-model)
 ```vue
 <template>
@@ -54,6 +57,7 @@ npm install vue-otp-autofill
     const onVerify = () => {/* call API with code.value */};
 </script>
 ```
+---
 
 ## ⚙️ Props
 
@@ -62,19 +66,23 @@ npm install vue-otp-autofill
 |modelValue|String|""|The OTP value (two-way bound via v-model)|
 |length|Number|6|Number of input boxes|
 
+---
+
 ## 🧠 How it works
 
--Each box holds one character.
+- Each box holds one character.
 
--Typing a digit advances focus to the next box.
+- Typing a digit advances focus to the next box.
 
--Backspace on an empty box jumps to the previous.
+- Backspace on an empty box jumps to the previous.
 
--Persian digits ۰-۹ are auto-converted to English 0-9.
+- Persian digits ۰-۹ are auto-converted to English 0-9.
 
--When supported, Web OTP API can auto-fill from SMS.
+- When supported, Web OTP API can auto-fill from SMS.
 
-### 📲 Web OTP API (SMS Autofill)
+---
+
+## 📲 Web OTP API (SMS Autofill)
 
 If supported (mainly Chrome on Android, over HTTPS), the component will request the OTP automatically and fill the boxes.
 
@@ -93,13 +101,15 @@ or
 
 ### Important notes
 
-Must be served over HTTPS.
+- Must be served over HTTPS.
 
-The origin in SMS (after @) must match the page origin exactly (scheme + domain + port).
+- The origin in SMS (after @) must match the page origin exactly (scheme + domain + port).
 
-Only one active navigator.credentials.get({ otp }) per page.
+- Only one active navigator.credentials.get({ otp }) per page.
 
-Some Android ROMs/browsers block this; the component will gracefully degrade to manual input.
+- Some Android ROMs/browsers block this; the component will gracefully degrade to manual input.
+
+---
 
 ## 🎨 Styling
 
@@ -136,6 +146,8 @@ The component ships with minimal CSS classes you can override:
 }
 ```
 
+---
+
 ## 🧪 TypeScript
 ```typescript
 // shims-vue.d.ts (if needed)
@@ -143,41 +155,47 @@ declare module "vue-otp-autofill";
 ```
 ## 🛠️ Nuxt / Vite
 
--Vite (Vue 3): فقط import کن مثل مثال بالا.
+- Vite (Vue 3): Just import like the example above.
 
--Nuxt 3: در صورت SSR، این کامپوننت خودش Web OTP رو فقط روی کلاینت فعال می‌کنه؛ مشکلی نداری.
+- Nuxt 3: In SSR, this component will enable Web OTP only on the client; no problem.
+
+---
 
 ## 🦾 Accessibility
 
--Boxes are regular <input type="text" maxlength="1">.
+* Boxes are regular <input type="text" maxlength="1">.
 
--Arrow keys (Left/Right) navigate.
+* Arrow keys (Left/Right) navigate.
 
--Backspace behavior mirrors native OTP inputs.
+* Backspace behavior mirrors native OTP inputs.
 
--Screen readers will read each box;
+* Screen readers will read each box;
+
+---
 
 ## 🧯 Troubleshooting
 
--No SMS autofill prompt on Android:
+* No SMS autofill prompt on Android:
 
- -Check HTTPS.
+ * Check HTTPS.
 
- -SMS must include @https://YOUR_ORIGIN exactly.
+ * SMS must include @https://YOUR_ORIGIN exactly.
 
- -Only one call to navigator.credentials.get should be active.
+ * Only one call to navigator.credentials.get should be active.
 
- -Try real device + Chrome (not WebView in some shells).
+ * Try real device + Chrome (not WebView in some shells).
 
- -Some carriers’ SMS gateways rewrite messages; ensure your template stays intact.
+ * Some carriers’ SMS gateways rewrite messages; ensure your template stays intact.
 
--Digits don’t move to the next box on mobile:
+* Digits don’t move to the next box on mobile:
 
- -Some virtual keyboards send composition events; the component handles input + normalization. If you customized handlers, prefer @input over @keydown.
+ * Some virtual keyboards send composition events; the component handles input + normalization. If you customized handlers, prefer @input over @keydown.
 
--Persian digits aren’t recognized:
+* Persian digits aren’t recognized:
 
- -Included converter maps ۰-۹ → 0-9. If you have Arabic-Indic ٠-٩, extend the map accordingly.
+ * Included converter maps ۰-۹ → 0-9. If you have Arabic-Indic ٠-٩, extend the map accordingly.
+
+---
 
 ## 🖼️ Demo
 
@@ -185,6 +203,8 @@ Add a screenshot/gif to your repo and reference it:
 
 ![Demo](./demo.png)
 
+---
+
 ## 📃 License
 
-MIT © 2025 — dnylfrd
+MIT © 2025 — [Dnylfrd](https://mailto:29danialfrd69@gmail.com) ❤️.
