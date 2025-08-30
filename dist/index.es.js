@@ -1,71 +1,72 @@
-import { ref as v, watch as f, onMounted as y, createElementBlock as p, openBlock as i, createTextVNode as _, toDisplayString as w, Fragment as I, renderList as V, withDirectives as k, withKeys as A, withModifiers as O, vModelText as x } from "vue";
-const S = (r, u) => {
-  const o = r.__vccOpts || r;
-  for (const [s, n] of u)
-    o[s] = n;
-  return o;
-}, T = { class: "otp-container" }, b = ["onUpdate:modelValue", "onInput", "onKeydown", "placeholder"], B = {
+import { ref as g, watch as y, onMounted as v, createElementBlock as u, openBlock as i, Fragment as w, renderList as k, withDirectives as x, normalizeClass as b, vModelText as _, nextTick as s } from "vue";
+const A = { class: "otp-container" }, T = ["onUpdate:modelValue", "placeholder", "onKeydown"], D = `
+  .otp-container { direction: ltr;display: flex; gap: 0.5rem; justify-content: center; }
+  .digit-box { width: 1.5rem; height: 2rem; font-size: 1rem; text-align: center; border: 2px solid black; border-radius: 6px; }
+  .bounce { animation: pulse 0.3s ease-in-out alternate; } 
+    @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+  `, C = {
   __name: "OtpInput",
   props: {
     modelValue: { type: String, default: "" },
-    length: { type: Number, default: 6 },
-    placeholder: { type: String, default: "" }
+    length: { type: Number, default: 6 }
   },
   emits: ["update:modelValue"],
-  setup(r, { emit: u }) {
-    const o = r, s = u, n = v(Array(o.length).fill(""));
-    f(
-      () => o.modelValue,
-      (e) => {
-        if (e !== n.value.join("")) {
-          const l = e.split("").slice(0, o.length);
-          n.value = Array.from({ length: o.length }, (c, t) => l[t] || "");
-        }
-      },
-      { immediate: !0 }
-    ), f(n, (e) => {
-      s("update:modelValue", e.join(""));
-    });
-    function m(e, l) {
-      e.target.value && l < o.length - 1 && document.querySelectorAll(".otp-input")[l + 1]?.focus();
-    }
-    function h(e) {
-      !n.value[e] && e > 0 && document.querySelectorAll(".otp-input")[e - 1]?.focus();
-    }
-    async function g(e = 6e4) {
+  setup(d, { emit: p }) {
+    const c = d, f = p, o = g(Array.from({ length: c.length }, (e, t) => c.modelValue[t] || "")), m = (e, t) => {
+      const r = e.currentTarget.parentElement.children, n = /^[0-9]$/.test(e.key);
+      if (!n && !["Backspace", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)) {
+        e.preventDefault();
+        return;
+      }
+      if (n) {
+        o.value[t] = e.key, e.preventDefault(), t < o.value.length - 1 && s(() => r[t + 1].focus());
+        return;
+      }
+      if (e.key === "Backspace") {
+        o.value[t] = "", e.preventDefault(), t > 0 && s(() => r[t - 1].focus());
+        return;
+      }
+      e.key === "ArrowLeft" && t > 0 && s(() => r[t - 1].focus()), e.key === "ArrowRight" && t < o.value.length - 1 && s(() => r[t + 1].focus());
+    };
+    async function h(e = 6e4) {
       if (!("OTPCredential" in window)) return;
-      const l = new AbortController(), c = l.signal;
-      setTimeout(() => l.abort(), e);
+      const t = new AbortController(), r = t.signal;
+      setTimeout(() => t.abort(), e);
       try {
-        const t = await navigator.credentials.get({
+        const n = await navigator.credentials.get({
           otp: { transport: ["sms"] },
-          signal: c
+          signal: r
         });
-        t?.code && t.code.split("").forEach((a, d) => {
-          d < o.length && (n.value[d] = a);
-        });
-      } catch (t) {
-        console.warn("OTP AutoFill failed:", t.message);
+        n?.code && (n.code.split("").forEach((l, a) => {
+          a < c.length && (o.value[a] = l);
+        }), s(() => {
+          const l = document.querySelectorAll(".otp-container input"), a = Math.min(n.code.length, c.length) - 1;
+          l[a] && l[a].focus();
+        }));
+      } catch (n) {
+        console.warn("OTP AutoFill failed:", n.message);
       }
     }
-    return y(() => {
-      g();
-    }), (e, l) => (i(), p("div", T, [
-      _(w(n.value) + " ", 1),
-      (i(!0), p(I, null, V(n.value, (c, t) => k((i(), p("input", {
-        key: t,
-        class: "otp-input",
-        "onUpdate:modelValue": (a) => n.value[t] = a,
+    return y(o, () => {
+      f("update:modelValue", o.value.join(""));
+    }, { deep: !0 }), v(() => {
+      const e = document.createElement("style");
+      e.textContent = D, document.head.appendChild(e), h();
+    }), (e, t) => (i(), u("div", A, [
+      (i(!0), u(w, null, k(o.value, (r, n) => x((i(), u("input", {
+        key: n,
+        type: "text",
+        class: b(["digit-box", { bounce: r !== "" }]),
+        "onUpdate:modelValue": (l) => o.value[n] = l,
         maxlength: "1",
-        onInput: (a) => m(a, t),
-        onKeydown: A(O((a) => h(t), ["prevent"]), ["backspace"]),
-        placeholder: r.placeholder || t + 1
-      }, null, 40, b)), [
-        [x, n.value[t]]
+        placeholder: o.value[n] ?? 0,
+        onKeydown: (l) => m(l, n)
+      }, null, 42, T)), [
+        [_, o.value[n]]
       ])), 128))
     ]));
   }
-}, K = /* @__PURE__ */ S(B, [["__scopeId", "data-v-deaa89c5"]]);
+};
 export {
-  K as default
+  C as default
 };
