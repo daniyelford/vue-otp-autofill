@@ -62,7 +62,7 @@ npm install vue-otp-autofill
 ## ⚙️ Props
 
 |   Prop   |   Type   | Default	 | Description |
-|----------|----------|----------|-------------|
+|:--------:|:--------:|:--------:|:-----------:|
 |modelValue|String|""|The OTP value (two-way bound via v-model)|
 |length|Number|6|Number of input boxes|
 
@@ -207,4 +207,4 @@ Add a screenshot/gif to your repo and reference it:
 
 ## 📃 License
 
-MIT © 2025 — [Dnylfrd](https://mailto:29danialfrd69@gmail.com) ❤️.
+MIT © 2025 — [Dnylfrd](mailto:29danialfrd69@gmail.com) ❤️.
