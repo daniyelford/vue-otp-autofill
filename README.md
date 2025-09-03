@@ -88,7 +88,7 @@ If supported (mainly Chrome on Android, over HTTPS), the component will request 
 
 ### Required SMS format (examples):
 ```diff
-<#> Your verification code is: 123456
+<#> Your verification code: 123456
 @https://your-domain.com #123456
 ```
 
