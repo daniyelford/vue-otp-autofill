@@ -1,36 +1,41 @@
-import { ref as y, nextTick as d, watch as g, onMounted as w, createElementBlock as h, openBlock as v, Fragment as _, renderList as b, withDirectives as k, normalizeClass as T, vModelText as I } from "vue";
-function A(p) {
-  const s = y("");
-  let r = null, o = null;
-  const n = async () => {
+import { ref as x, onUnmounted as b, nextTick as d, watch as h, onMounted as _, createElementBlock as v, openBlock as y, Fragment as w, renderList as k, withDirectives as I, normalizeClass as T, vModelText as A } from "vue";
+function C(p) {
+  const c = x("");
+  let n = null, r = null;
+  const l = async () => {
     if (!(!("OTPCredential" in window) || !navigator.credentials?.get)) {
-      r && r.abort(), r = new AbortController();
+      n && n.abort(), n = new AbortController();
       try {
-        const a = await navigator.credentials.get({
+        const o = await navigator.credentials.get({
           otp: { transport: ["sms"] },
-          signal: r.signal
+          signal: n.signal
         });
-        if (a?.code) {
-          const c = String(a.code).match(/\d+/)?.[0] || "";
-          s.value = c, d(() => {
-            const m = document.querySelectorAll(".otp-container input");
-            c.split("").slice(0, p).forEach((f, e) => {
-              m[e].value = f;
+        if (o?.code) {
+          const s = String(o.code).match(/\d+/)?.[0] || "";
+          c.value = s, d(() => {
+            const f = document.querySelectorAll(".otp-container input");
+            s.split("").slice(0, p).forEach((g, e) => {
+              f[e].value = g;
             });
-          }), o && (clearInterval(o), o = null);
+          }), r && (clearInterval(r), r = null);
         }
-      } catch (a) {
-        console.warn("OTP error:", a.message);
+      } catch (o) {
+        if (o.message) {
+          const s = o.message;
+          s.value = "";
+        }
       }
     }
-  };
-  return { otpResult: s, requestOTP: () => {
-    o && clearInterval(o), s.value || (o = setInterval(() => {
-      s.value || n();
+  }, m = () => {
+    r && clearInterval(r), c.value || (r = setInterval(() => {
+      c.value || l();
     }, 1e3));
-  } };
+  };
+  return b(() => {
+    r && clearInterval(r), n && n.abort();
+  }), { otpResult: c, requestOTP: m };
 }
-const O = { class: "otp-container" }, C = ["onUpdate:modelValue", "onInput", "onKeydown"], P = {
+const E = { class: "otp-container" }, V = ["onUpdate:modelValue", "onInput", "onKeydown"], P = {
   __name: "OtpInput",
   props: {
     modelValue: { type: String, default: "" },
@@ -38,46 +43,46 @@ const O = { class: "otp-container" }, C = ["onUpdate:modelValue", "onInput", "on
     reset: { type: Number, default: 0 }
   },
   emits: ["update:modelValue"],
-  setup(p, { emit: s }) {
-    const r = p, o = s, n = y(Array.from({ length: r.length }, (e, t) => r.modelValue[t] || "")), { otpResult: x, requestOTP: a } = A(r.length), c = (e) => {
+  setup(p, { emit: c }) {
+    const n = p, r = c, l = x(Array.from({ length: n.length }, (e, t) => n.modelValue[t] || "")), { otpResult: m, requestOTP: o } = C(n.length), s = (e) => {
       const t = { "۰": "0", "۱": "1", "۲": "2", "۳": "3", "۴": "4", "۵": "5", "۶": "6", "۷": "7", "۸": "8", "۹": "9" };
-      return e.replace(/[۰-۹]/g, (l) => t[l]);
-    }, m = (e, t) => {
-      const l = c(e.target.value).replace(/[^0-9]/g, "").charAt(0) || "";
-      n.value[t] = l, l && t < n.value.length - 1 && d(() => e.target.parentElement.children[t + 1].focus());
+      return e.replace(/[۰-۹]/g, (a) => t[a]);
     }, f = (e, t) => {
-      const l = e.currentTarget.parentElement.children;
+      const a = s(e.target.value).replace(/[^0-9]/g, "").charAt(0) || "";
+      l.value[t] = a, a && t < l.value.length - 1 && d(() => e.target.parentElement.children[t + 1].focus());
+    }, g = (e, t) => {
+      const a = e.currentTarget.parentElement.children;
       if (e.key === "Backspace") {
-        !n.value[t] && t > 0 && d(() => l[t - 1].focus());
+        !l.value[t] && t > 0 && d(() => a[t - 1].focus());
         return;
       }
-      e.key === "ArrowLeft" && t > 0 && d(() => l[t - 1].focus()), e.key === "ArrowRight" && t < n.value.length - 1 && d(() => l[t + 1].focus());
+      e.key === "ArrowLeft" && t > 0 && d(() => a[t - 1].focus()), e.key === "ArrowRight" && t < l.value.length - 1 && d(() => a[t + 1].focus());
     };
-    return g(n, () => {
-      o("update:modelValue", n.value.join(""));
-    }, { deep: !0 }), g(x, (e) => {
-      n.value = c(e).split("").slice(0, r.length), o("update:modelValue", e);
-    }), g(r.reset, () => {
-      n.value = y(Array.from({ length: r.length }, (e, t) => "")), a();
-    }), w(() => {
+    return h(l, () => {
+      r("update:modelValue", l.value.join(""));
+    }, { deep: !0 }), h(m, (e) => {
+      l.value = s(e).split("").slice(0, n.length), r("update:modelValue", e);
+    }), h(n.reset, () => {
+      l.value = x(Array.from({ length: n.length }, (e, t) => "")), o();
+    }), _(() => {
       const e = document.createElement("style");
       e.textContent = `
     .otp-container { direction: ltr;display: flex; gap: 0.5rem; justify-content: space-evenly; }
     .digit-box { width: 1.5rem; height: 2rem; font-size: 1rem; text-align: center; border: 2px solid black; border-radius: 6px; }
     .bounce { animation: pulse 0.3s ease-in-out alternate; } 
       @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
-    `, document.head.appendChild(e), a();
-    }), (e, t) => (v(), h("div", O, [
-      (v(!0), h(_, null, b(n.value, (l, u) => k((v(), h("input", {
+    `, document.head.appendChild(e), o();
+    }), (e, t) => (y(), v("div", E, [
+      (y(!0), v(w, null, k(l.value, (a, u) => I((y(), v("input", {
         key: u,
         type: "text",
-        class: T(["digit-box", { bounce: l !== "" }]),
-        "onUpdate:modelValue": (i) => n.value[u] = i,
+        class: T(["digit-box", { bounce: a !== "" }]),
+        "onUpdate:modelValue": (i) => l.value[u] = i,
         maxlength: "1",
-        onInput: (i) => m(i, u),
-        onKeydown: (i) => f(i, u)
-      }, null, 42, C)), [
-        [I, n.value[u]]
+        onInput: (i) => f(i, u),
+        onKeydown: (i) => g(i, u)
+      }, null, 42, V)), [
+        [A, l.value[u]]
       ])), 128))
     ]));
   }

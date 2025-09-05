@@ -1,4 +1,4 @@
-import { ref , nextTick } from "vue";
+import { ref , nextTick , onUnmounted } from "vue";
 export function useOTP(length) {
     const otpResult = ref('');
     let controller = null , intervalId = null
@@ -26,7 +26,10 @@ export function useOTP(length) {
                 }
             }
         } catch (err) {
-            console.warn("OTP error:", err.message);
+            if(err.message){
+                const error=err.message
+                error.value=''
+            } 
         }
     };
     const requestOTP = () =>{
@@ -37,5 +40,9 @@ export function useOTP(length) {
             }, 1000);
         }
     }
+    onUnmounted(() => {
+        if (intervalId) clearInterval(intervalId);
+        if (controller) controller.abort();
+    });
     return { otpResult , requestOTP };
 }
