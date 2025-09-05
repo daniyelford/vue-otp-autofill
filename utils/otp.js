@@ -27,8 +27,8 @@ export function useOTP(length) {
             }
         } catch (err) {
             if(err.message){
-                const error=err.message
-                error.value=''
+                let error=err.message
+                error=null
             } 
         }
     };

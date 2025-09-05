@@ -1,6 +1,6 @@
 import { ref as x, onUnmounted as b, nextTick as d, watch as h, onMounted as _, createElementBlock as v, openBlock as y, Fragment as w, renderList as k, withDirectives as I, normalizeClass as T, vModelText as A } from "vue";
 function C(p) {
-  const c = x("");
+  const s = x("");
   let n = null, r = null;
   const l = async () => {
     if (!(!("OTPCredential" in window) || !navigator.credentials?.get)) {
@@ -11,29 +11,26 @@ function C(p) {
           signal: n.signal
         });
         if (o?.code) {
-          const s = String(o.code).match(/\d+/)?.[0] || "";
-          c.value = s, d(() => {
+          const c = String(o.code).match(/\d+/)?.[0] || "";
+          s.value = c, d(() => {
             const f = document.querySelectorAll(".otp-container input");
-            s.split("").slice(0, p).forEach((g, e) => {
+            c.split("").slice(0, p).forEach((g, e) => {
               f[e].value = g;
             });
           }), r && (clearInterval(r), r = null);
         }
       } catch (o) {
-        if (o.message) {
-          const s = o.message;
-          s.value = "";
-        }
+        o.message && o.message;
       }
     }
   }, m = () => {
-    r && clearInterval(r), c.value || (r = setInterval(() => {
-      c.value || l();
+    r && clearInterval(r), s.value || (r = setInterval(() => {
+      s.value || l();
     }, 1e3));
   };
   return b(() => {
     r && clearInterval(r), n && n.abort();
-  }), { otpResult: c, requestOTP: m };
+  }), { otpResult: s, requestOTP: m };
 }
 const E = { class: "otp-container" }, V = ["onUpdate:modelValue", "onInput", "onKeydown"], P = {
   __name: "OtpInput",
@@ -43,12 +40,12 @@ const E = { class: "otp-container" }, V = ["onUpdate:modelValue", "onInput", "on
     reset: { type: Number, default: 0 }
   },
   emits: ["update:modelValue"],
-  setup(p, { emit: c }) {
-    const n = p, r = c, l = x(Array.from({ length: n.length }, (e, t) => n.modelValue[t] || "")), { otpResult: m, requestOTP: o } = C(n.length), s = (e) => {
+  setup(p, { emit: s }) {
+    const n = p, r = s, l = x(Array.from({ length: n.length }, (e, t) => n.modelValue[t] || "")), { otpResult: m, requestOTP: o } = C(n.length), c = (e) => {
       const t = { "۰": "0", "۱": "1", "۲": "2", "۳": "3", "۴": "4", "۵": "5", "۶": "6", "۷": "7", "۸": "8", "۹": "9" };
       return e.replace(/[۰-۹]/g, (a) => t[a]);
     }, f = (e, t) => {
-      const a = s(e.target.value).replace(/[^0-9]/g, "").charAt(0) || "";
+      const a = c(e.target.value).replace(/[^0-9]/g, "").charAt(0) || "";
       l.value[t] = a, a && t < l.value.length - 1 && d(() => e.target.parentElement.children[t + 1].focus());
     }, g = (e, t) => {
       const a = e.currentTarget.parentElement.children;
@@ -61,7 +58,7 @@ const E = { class: "otp-container" }, V = ["onUpdate:modelValue", "onInput", "on
     return h(l, () => {
       r("update:modelValue", l.value.join(""));
     }, { deep: !0 }), h(m, (e) => {
-      l.value = s(e).split("").slice(0, n.length), r("update:modelValue", e);
+      l.value = c(e).split("").slice(0, n.length), r("update:modelValue", e);
     }), h(n.reset, () => {
       l.value = x(Array.from({ length: n.length }, (e, t) => "")), o();
     }), _(() => {
