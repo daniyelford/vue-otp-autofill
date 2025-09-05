@@ -1,6 +1,6 @@
 {
   "name": "vue-otp-autofill",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Vue 3 OTP input with Web OTP API autofill support",
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
@@ -19,13 +19,24 @@
   "keywords": [
     "vue",
     "otp",
+    "vue otp",
     "credentials",
+    "otp input autofill",
+    "input autofill",
     "otp input",
+    "vue otp input",
+    "vue otp input autofill",
     "otp credentials",
+    "vue otp credentials",
     "sms autofill",
+    "vue sms autofill",
+    "vue otp sms autofill",
     "sms",
+    "otp sms",
+    "vue otp sms",
     "autofill",
-    "otp autofill"
+    "otp autofill",
+    "vue otp autofill"
   ],
   "author": "dnylfrd",
   "license": "MIT",
