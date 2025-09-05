@@ -26,14 +26,15 @@ npm install vue-otp-autofill
 ### Basic
 ```vue
 <template>
-    <OtpInput v-model="otp" :length="6" />
-    <button :disabled="otp.length !== 6" @click="submit">Submit</button>
+    <OtpInput v-model="otp" :length="6" :reset="resetNumber"/>
+    <button :disabled="otp.value.length !== 6" @click="submit">Submit</button>
+    <button :disabled="otp.value.length == 0" @click="resetNumber.value++">clear</button>
 </template>
 
 <script setup>
     import { ref } from "vue";
     import OtpInput from "vue-otp-autofill";
-
+    const resetNumber=ref(0)
     const otp = ref("");
     const submit = () => {
     console.log("OTP:", otp.value);
@@ -45,16 +46,19 @@ npm install vue-otp-autofill
 ```vue
 <template>
     <form @submit.prevent="onVerify">
-        <OtpInput v-model="code" :length="5" />
-        <p v-if="code.length !== 5">Enter 5 digits</p>
-        <button :disabled="code.length !== 5">Verify</button>
+        <OtpInput v-model="code" :length="5" :reset="resetNumber"/>
+        <p v-if="code.value.length !== 5">Enter 5 digits</p>
+        <button type="submit" :disabled="code.value.length !== 5">Verify</button>
+        <button type="button" @click="resetNumber.value++" :disabled="code.length.value == 0">clear</button>
     </form>
 </template>
 <script setup>
     import { ref } from "vue";
     import OtpInput from "vue-otp-autofill";
     const code = ref("");
+    const resetNumber=ref(0)
     const onVerify = () => {/* call API with code.value */};
+
 </script>
 ```
 ---
@@ -65,6 +69,7 @@ npm install vue-otp-autofill
 |:--------:|:--------:|:--------:|:-----------:|
 |modelValue|String|""|The OTP value (two-way bound via v-model)|
 |length|Number|6|Number of input boxes|
+|reset|Number|0|Number of reset password|
 
 ---
 
@@ -89,14 +94,14 @@ If supported (mainly Chrome on Android, over HTTPS), the component will request 
 ### Required SMS format (examples):
 ```diff
 <#> Your verification code: 123456
-@https://your-domain.com #123456
+@your-domain.com #123456
 ```
 
 or
 
 ```diff
 <#> 654321 is your code
-@https://your-domain.com #654321
+@your-domain.com #654321
 ```
 
 ### Important notes

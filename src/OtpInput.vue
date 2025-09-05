@@ -15,13 +15,15 @@
 </template>
 <script setup>
   import { nextTick, defineProps, defineEmits, watch, ref, onMounted } from "vue";
-  const otpvalue= ref('')
+  import { useOTP } from "../utils/otp";
   const props = defineProps({
     modelValue: { type: String, default: "" },
     length: { type: Number, default: 6 },
+    reset: { type: Number, default:0 }
   });
   const emit = defineEmits(["update:modelValue"]);
   const digits = ref(Array.from({ length: props.length }, (_, i) => props.modelValue[i] || ""));
+  const { otpResult , requestOTP } = useOTP(props.length);
   const persianToEnglishDigits = (str) => {
     const map = { "۰":"0","۱":"1","۲":"2","۳":"3","۴":"4","۵":"5","۶":"6","۷":"7","۸":"8","۹":"9" };
     return str.replace(/[۰-۹]/g, d => map[d]);
@@ -50,8 +52,15 @@
   };
   watch(digits, () => {
     emit("update:modelValue", digits.value.join(""));
-    otpvalue.value = digits.value.join("");
   }, { deep: true });
+  watch(otpResult,(newVal)=>{
+    digits.value = newVal.split("").slice(0, props.length);
+    emit("update:modelValue", newVal);
+  })
+  watch(props.reset,()=>{
+    digits.value=ref(Array.from({ length: props.length }, (_, i) => ""));
+    requestOTP();
+  })
   onMounted(() => {
     const style = document.createElement('style');
     style.textContent = `
@@ -61,30 +70,6 @@
       @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
     `;
     document.head.appendChild(style);
-    if ("OTPCredential" in window) {
-      const ac = new AbortController();
-      navigator.credentials.get({
-        otp: { transport:["sms"] },
-        signal: ac.signal
-      }).then(otp => {
-        if (otp?.code) {
-          otpvalue.value = otp.code;
-          const arr = otp.code.split("").slice(0, props.length);
-          digits.value = arr;
-          nextTick(() => {
-            const inputs = document.querySelectorAll(".otp-container input");
-            arr.forEach((v,i) => {
-              if (inputs[i]) inputs[i].value = v;
-            });
-            const last = Math.min(arr.length, props.length)-1;
-            if (inputs[last]) inputs[last].focus();
-          });
-        } else {
-          console.warn("OTP code not received!")
-        }
-      }).catch(err => {
-        console.warn("OTP error", err.message)
-      });
-    }
+    requestOTP();
   });
 </script>
