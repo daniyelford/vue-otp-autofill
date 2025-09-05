@@ -213,4 +213,5 @@ Add a screenshot/gif to your repo and reference it:
 ## 📃 License
 
 MIT © 2025 — [Dnylfrd](mailto:29danialfrd69@gmail.com) ❤️.
+
 GITHUB — [daniyelford](https://github.com/daniyelford/vue-otp-autofill) ❤️.
