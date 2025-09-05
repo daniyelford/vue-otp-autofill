@@ -54,7 +54,7 @@
     emit("update:modelValue", digits.value.join(""));
   }, { deep: true });
   watch(otpResult,(newVal)=>{
-    digits.value = newVal.split("").slice(0, props.length);
+    digits.value = persianToEnglishDigits(newVal).split("").slice(0, props.length);
     emit("update:modelValue", newVal);
   })
   watch(props.reset,()=>{

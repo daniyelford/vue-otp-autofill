@@ -12,7 +12,7 @@ export function useOTP(length) {
                 signal:controller.signal,
             });
             if (otp?.code) {
-                const code=String(otp.code)
+                const code = String(otp.code).match(/\d+/)?.[0] || '';
                 otpResult.value = code;
                 nextTick(() => {
                     const inputs = document.querySelectorAll(".otp-container input");
@@ -34,7 +34,7 @@ export function useOTP(length) {
         if (!otpResult.value) {
             intervalId = setInterval(() => {
                 if (!otpResult.value) otpCreator();
-            }, 1500);
+            }, 1000);
         }
     }
     return { otpResult , requestOTP };
