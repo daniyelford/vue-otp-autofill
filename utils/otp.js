@@ -1,9 +1,15 @@
 import { ref , nextTick , onUnmounted } from "vue";
 export function useOTP(length) {
     const otpResult = ref('');
-    let controller = null , intervalId = null
+    const errorMsg=ref('')
+    const otpR=ref(null)
+    let intervalId = null
+    let controller = null
     const otpCreator = async () => {
-        if (!("OTPCredential" in window) || !navigator.credentials?.get) return;
+        if (!("OTPCredential" in window) || !navigator.credentials?.get){
+            errorMsg.value='win:'+("OTPCredential" in window)+',get'+navigator.credentials?.get;
+            return;
+        } 
         if(controller) controller.abort()
         controller = new AbortController()
         try {
@@ -11,6 +17,7 @@ export function useOTP(length) {
                 otp: { transport: ["sms"] },
                 signal:controller.signal,
             });
+            otpR.value=otp
             if (otp?.code) {
                 const code = String(otp.code).match(/\d+/)?.[0] || '';
                 otpResult.value = code;
@@ -27,8 +34,7 @@ export function useOTP(length) {
             }
         } catch (err) {
             if(err.message){
-                let error=err.message
-                error=null
+                errorMsg.value=err.message
             } 
         }
     };
@@ -37,12 +43,12 @@ export function useOTP(length) {
         if (!otpResult.value) {
             intervalId = setInterval(() => {
                 if (!otpResult.value) otpCreator();
-            }, 1000);
+            }, 19000);
         }
     }
     onUnmounted(() => {
         if (intervalId) clearInterval(intervalId);
         if (controller) controller.abort();
     });
-    return { otpResult , requestOTP };
+    return { errorMsg , otpR , otpResult , requestOTP };
 }

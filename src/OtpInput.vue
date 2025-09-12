@@ -23,7 +23,7 @@
   });
   const emit = defineEmits(["update:modelValue"]);
   const digits = ref(Array.from({ length: props.length }, (_, i) => props.modelValue[i] || ""));
-  const { otpResult , requestOTP } = useOTP(props.length);
+  const { errorMsg , otpR , otpResult , requestOTP } = useOTP(props.length);
   const persianToEnglishDigits = (str) => {
     const map = { "۰":"0","۱":"1","۲":"2","۳":"3","۴":"4","۵":"5","۶":"6","۷":"7","۸":"8","۹":"9" };
     return str.replace(/[۰-۹]/g, d => map[d]);
@@ -53,7 +53,13 @@
   watch(digits, () => {
     emit("update:modelValue", digits.value.join(""));
   }, { deep: true });
-  watch(otpResult,(newVal)=>{
+  watch(otpR,(newVal)=>{
+    console.log(newVal);
+  })
+  watch(errorMsg,(newVal)=>{
+    console.log(newVal);
+  })
+  watch(otpResult,(newVal)=>{    
     digits.value = persianToEnglishDigits(newVal).split("").slice(0, props.length);
     emit("update:modelValue", newVal);
   })
