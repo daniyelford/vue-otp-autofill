@@ -95,7 +95,7 @@ const N = { class: "otp-container" }, P = ["value", "onInput", "onKeydown"], V =
       O("div", N, [
         (d(!0), u(x, null, S(a.value, (r, y) => (d(), u("input", {
           key: y,
-          type: "text",
+          type: "number",
           class: w(["digit-box", { bounce: r !== "" }]),
           value: r,
           maxlength: "1",

@@ -5,7 +5,7 @@
     <input
       v-for="(digit, i) in digits"
       :key="i"
-      type="text"
+      type="number"
       class="digit-box"
       :class="{ bounce: digit !== '' }"
       :value="digit"

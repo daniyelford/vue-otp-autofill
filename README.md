@@ -46,7 +46,7 @@ npm install vue-otp-autofill
 ```vue
 <template>
     <form @submit.prevent="onVerify">
-        <OtpInput v-model="code" :length="5" :reset="resetNumber" :fakeCode="'12345'"  :timer="15000" :production="false" :css="`input{width:100px;height:100px;}`"/>
+        <OtpInput v-model="code" :length="5" :reset="resetNumber" :fakeCode="'12345'" :timer="15000" :production="false" :css="`input{width:100px;height:100px;}`"/>
         <p v-if="code.value.length !== 5">Enter 5 digits</p>
         <button type="submit" :disabled="code.value.length !== 5">Verify</button>
         <button type="button" @click="resetNumber.value++" :disabled="code.length.value == 0">clear</button>
