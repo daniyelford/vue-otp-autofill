@@ -1,5 +1,5 @@
-import { ref , nextTick , onUnmounted } from "vue";
-export function useOTP(length) {
+import { ref , onUnmounted } from "vue";
+export function useOTP(timer) {
     const otpResult = ref('');
     const errorMsg=ref('')
     const otpR=ref(null)
@@ -21,12 +21,6 @@ export function useOTP(length) {
             if (otp?.code) {
                 const code = String(otp.code).match(/\d+/)?.[0] || '';
                 otpResult.value = code;
-                nextTick(() => {
-                    const inputs = document.querySelectorAll(".otp-container input");
-                    code.split("").slice(0, length).forEach((v, i) => {
-                        inputs[i].value = v;
-                    });
-                });
                 if (intervalId){
                     clearInterval(intervalId);
                     intervalId = null
@@ -41,9 +35,10 @@ export function useOTP(length) {
     const requestOTP = () =>{
         if (intervalId) clearInterval(intervalId);
         if (!otpResult.value) {
+            otpCreator();
             intervalId = setInterval(() => {
                 if (!otpResult.value) otpCreator();
-            }, 19000);
+            }, timer);
         }
     }
     onUnmounted(() => {

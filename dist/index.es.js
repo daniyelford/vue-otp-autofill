@@ -1,95 +1,111 @@
-import { ref as m, onUnmounted as _, nextTick as g, watch as p, onMounted as k, createElementBlock as x, openBlock as b, Fragment as I, renderList as T, withDirectives as A, normalizeClass as C, vModelText as E } from "vue";
-function O(f) {
-  const s = m(""), l = m(""), c = m(null);
-  let t = null, a = null;
-  const v = async () => {
+import { ref as v, onUnmounted as E, watch as k, nextTick as i, onMounted as M, createElementBlock as u, openBlock as d, Fragment as x, createCommentVNode as _, createElementVNode as O, unref as m, normalizeClass as w, toDisplayString as C, renderList as S } from "vue";
+function A(h) {
+  const s = v(""), n = v(""), p = v(null);
+  let a = null, o = null;
+  const c = async () => {
     if (!("OTPCredential" in window) || !navigator.credentials?.get) {
-      l.value = "win:" + ("OTPCredential" in window) + ",get" + navigator.credentials?.get;
+      n.value = "win:" + ("OTPCredential" in window) + ",get" + navigator.credentials?.get;
       return;
     }
-    a && a.abort(), a = new AbortController();
+    o && o.abort(), o = new AbortController();
     try {
-      const r = await navigator.credentials.get({
+      const l = await navigator.credentials.get({
         otp: { transport: ["sms"] },
-        signal: a.signal
+        signal: o.signal
       });
-      if (c.value = r, r?.code) {
-        const u = String(r.code).match(/\d+/)?.[0] || "";
-        s.value = u, g(() => {
-          const y = document.querySelectorAll(".otp-container input");
-          u.split("").slice(0, f).forEach((w, e) => {
-            y[e].value = w;
-          });
-        }), t && (clearInterval(t), t = null);
+      if (p.value = l, l?.code) {
+        const f = String(l.code).match(/\d+/)?.[0] || "";
+        s.value = f, a && (clearInterval(a), a = null);
       }
-    } catch (r) {
-      r.message && (l.value = r.message);
+    } catch (l) {
+      l.message && (n.value = l.message);
     }
-  }, h = () => {
-    t && clearInterval(t), s.value || (t = setInterval(() => {
-      s.value || v();
-    }, 19e3));
+  }, g = () => {
+    a && clearInterval(a), s.value || (c(), a = setInterval(() => {
+      s.value || c();
+    }, h));
   };
-  return _(() => {
-    t && clearInterval(t), a && a.abort();
-  }), { errorMsg: l, otpR: c, otpResult: s, requestOTP: h };
+  return E(() => {
+    a && clearInterval(a), o && o.abort();
+  }), { errorMsg: n, otpR: p, otpResult: s, requestOTP: g };
 }
-const V = { class: "otp-container" }, P = ["onUpdate:modelValue", "onInput", "onKeydown"], M = {
+const N = { class: "otp-container" }, P = ["value", "onInput", "onKeydown"], V = {
   __name: "OtpInput",
   props: {
     modelValue: { type: String, default: "" },
+    css: { type: String, default: "" },
     length: { type: Number, default: 6 },
-    reset: { type: Number, default: 0 }
+    timer: { type: Number, default: 16e3 },
+    reset: { type: Number, default: 0 },
+    fakeCode: { type: String, default: "123456" },
+    production: { type: Boolean, default: !0 }
   },
   emits: ["update:modelValue"],
-  setup(f, { emit: s }) {
-    const l = f, c = s, t = m(Array.from({ length: l.length }, (e, n) => l.modelValue[n] || "")), { errorMsg: a, otpR: v, otpResult: h, requestOTP: r } = O(l.length), u = (e) => {
-      const n = { "۰": "0", "۱": "1", "۲": "2", "۳": "3", "۴": "4", "۵": "5", "۶": "6", "۷": "7", "۸": "8", "۹": "9" };
-      return e.replace(/[۰-۹]/g, (o) => n[o]);
-    }, y = (e, n) => {
-      const o = u(e.target.value).replace(/[^0-9]/g, "").charAt(0) || "";
-      t.value[n] = o, o && n < t.value.length - 1 && g(() => e.target.parentElement.children[n + 1].focus());
-    }, w = (e, n) => {
-      const o = e.currentTarget.parentElement.children;
+  setup(h, { emit: s }) {
+    const n = h, p = s, a = v(Array.from({ length: n.length }, (e, t) => n.modelValue[t] || "")), { errorMsg: o, otpR: c, otpResult: g, requestOTP: l } = A(n.timer), f = (e) => {
+      const t = { "۰": "0", "۱": "1", "۲": "2", "۳": "3", "۴": "4", "۵": "5", "۶": "6", "۷": "7", "۸": "8", "۹": "9" };
+      return e.replace(/[۰-۹]/g, (r) => t[r]);
+    }, I = (e, t) => {
+      const r = f(e.target.value).replace(/[^0-9]/g, "").charAt(0) || "";
+      a.value[t] = r, r && t < a.value.length - 1 && i(() => e.target.parentElement.children[t + 1].focus());
+    }, T = (e, t) => {
+      const r = e.currentTarget.parentElement.children;
       if (e.key === "Backspace") {
-        !t.value[n] && n > 0 && g(() => o[n - 1].focus());
+        !a.value[t] && t > 0 && i(() => r[t - 1].focus());
         return;
       }
-      e.key === "ArrowLeft" && n > 0 && g(() => o[n - 1].focus()), e.key === "ArrowRight" && n < t.value.length - 1 && g(() => o[n + 1].focus());
+      e.key === "ArrowLeft" && t > 0 && i(() => r[t - 1].focus()), e.key === "ArrowRight" && t < a.value.length - 1 && i(() => r[t + 1].focus());
     };
-    return p(t, () => {
-      c("update:modelValue", t.value.join(""));
-    }, { deep: !0 }), p(v, (e) => {
-      console.log(e);
-    }), p(a, (e) => {
-      console.log(e);
-    }), p(h, (e) => {
-      t.value = u(e).split("").slice(0, l.length), c("update:modelValue", e);
-    }), p(l.reset, () => {
-      t.value = m(Array.from({ length: l.length }, (e, n) => "")), r();
-    }), k(() => {
+    return k(a, (e) => {
+      n.production || console.log(e), p("update:modelValue", e.join(""));
+    }, { deep: !0 }), k(g, (e) => {
+      const t = f(e).split("").slice(0, n.length);
+      i(() => {
+        for (let r = 0; r < n.length; r++)
+          a.value[r] = t[r] || "";
+      });
+    }), k(n.reset, () => {
+      i(() => {
+        for (let e = 0; e < n.length; e++)
+          a.value[e] = "";
+        g.value = "", l();
+      });
+    }), M(() => {
       const e = document.createElement("style");
-      e.textContent = `
+      if (e.textContent = n.css && n.css.trim().length > 0 ? n.css : `
+    .hideMassages { display:none; }
     .otp-container { direction: ltr;display: flex; gap: 0.5rem; justify-content: space-evenly; }
     .digit-box { width: 1.5rem; height: 2rem; font-size: 1rem; text-align: center; border: 2px solid black; border-radius: 6px; }
     .bounce { animation: pulse 0.3s ease-in-out alternate; } 
       @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
-    `, document.head.appendChild(e), r();
-    }), (e, n) => (b(), x("div", V, [
-      (b(!0), x(I, null, T(t.value, (o, i) => A((b(), x("input", {
-        key: i,
-        type: "text",
-        class: C(["digit-box", { bounce: o !== "" }]),
-        "onUpdate:modelValue": (d) => t.value[i] = d,
-        maxlength: "1",
-        onInput: (d) => y(d, i),
-        onKeydown: (d) => w(d, i)
-      }, null, 42, P)), [
-        [E, t.value[i]]
-      ])), 128))
-    ]));
+    `, document.head.appendChild(e), !n.production) {
+        const t = navigator.credentials.get?.bind(navigator.credentials);
+        navigator.credentials.get = async (r) => r?.otp ? { code: String(n.fakeCode) } : t ? t(r) : null;
+      }
+      l();
+    }), (e, t) => (d(), u(x, null, [
+      m(o) ? (d(), u("div", {
+        key: 0,
+        class: w(n.production ? "hideMassages" : "")
+      }, C(m(o)), 3)) : _("", !0),
+      m(c) ? (d(), u("div", {
+        key: 1,
+        class: w(n.production ? "hideMassages" : "")
+      }, C(m(c)), 3)) : _("", !0),
+      O("div", N, [
+        (d(!0), u(x, null, S(a.value, (r, y) => (d(), u("input", {
+          key: y,
+          type: "text",
+          class: w(["digit-box", { bounce: r !== "" }]),
+          value: r,
+          maxlength: "1",
+          onInput: (b) => I(b, y),
+          onKeydown: (b) => T(b, y)
+        }, null, 42, P))), 128))
+      ])
+    ], 64));
   }
 };
 export {
-  M as default
+  V as default
 };

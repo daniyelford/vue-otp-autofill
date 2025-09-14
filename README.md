@@ -26,7 +26,7 @@ npm install vue-otp-autofill
 ### Basic
 ```vue
 <template>
-    <OtpInput v-model="otp" :length="6" :reset="resetNumber"/>
+    <OtpInput v-model="otp" :length="6" :reset="resetNumber" :timer="15000" :production="true" :css=""/>
     <button :disabled="otp.value.length !== 6" @click="submit">Submit</button>
     <button :disabled="otp.value.length == 0" @click="resetNumber.value++">clear</button>
 </template>
@@ -46,7 +46,7 @@ npm install vue-otp-autofill
 ```vue
 <template>
     <form @submit.prevent="onVerify">
-        <OtpInput v-model="code" :length="5" :reset="resetNumber"/>
+        <OtpInput v-model="code" :length="5" :reset="resetNumber" :fakeCode="'12345'"  :timer="15000" :production="false" :css="`input{width:100px;height:100px;}`"/>
         <p v-if="code.value.length !== 5">Enter 5 digits</p>
         <button type="submit" :disabled="code.value.length !== 5">Verify</button>
         <button type="button" @click="resetNumber.value++" :disabled="code.length.value == 0">clear</button>
@@ -70,6 +70,10 @@ npm install vue-otp-autofill
 |modelValue|String|""|The OTP value (two-way bound via v-model)|
 |length|Number|6|Number of input boxes|
 |reset|Number|0|Number of reset password|
+|timer|Number|16000|milliseconds for reset code and send new code|
+|fakeCode|String|'123456'|Example code for testing(set production to false for testing)|
+|production|Boolean|true|production or test development mode|
+|css|String|''|custom style with css code|
 
 ---
 
@@ -143,6 +147,10 @@ The component ships with minimal CSS classes you can override:
 
 .bounce {
   animation: otp-bounce .25s ease-in-out;
+}
+
+.hideMassages { 
+  display:none; 
 }
 
 @keyframes otp-bounce {
